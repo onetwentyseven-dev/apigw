@@ -2,6 +2,7 @@ package apigw
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -36,7 +37,8 @@ func (s *Service) AddHandler(key string, handler Handler) {
 func (s *Service) HandleRoutes() Handler {
 	fmt.Println("Handle Routes called")
 	return func(ctx context.Context, input events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-		fmt.Println("event received")
+		data, _ := json.Marshal(input)
+		fmt.Println("input :: ", string(data))
 		if _, ok := s.handlers[input.Resource]; !ok {
 			return s.RespondJSON(http.StatusNotFound, map[string]string{"error": fmt.Sprintf("Route Not Found for %s", input.Resource)}, nil)
 
