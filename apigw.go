@@ -15,7 +15,7 @@ type Service struct {
 	handlers map[string]Handler
 }
 
-type Handler func(context.Context, events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error)
+type Handler func(context.Context, events.APIGatewayV2HTTPRequest) (*events.APIGatewayV2HTTPResponse, error)
 
 func New(lgr *logrus.Logger) *Service {
 	return &Service{
@@ -36,11 +36,11 @@ func (s *Service) AddHandler(key string, handler Handler) {
 
 func (s *Service) HandleRoutes() Handler {
 	fmt.Println("Handle Routes called")
-	return func(ctx context.Context, input events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	return func(ctx context.Context, input events.APIGatewayV2HTTPRequest) (*events.APIGatewayV2HTTPResponse, error) {
 		data, _ := json.Marshal(input)
 		fmt.Println("input :: ", string(data))
 		if _, ok := s.handlers[input.RouteKey]; !ok {
-			return s.RespondJSON(http.StatusNotFound, map[string]string{"error": fmt.Sprintf("Route Not Found for %s", input.Resource)}, nil)
+			return s.RespondJSON(http.StatusNotFound, map[string]string{"error": fmt.Sprintf("Route Not Found for %s", input.RouteKey)}, nil)
 
 		}
 
