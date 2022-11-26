@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/sirupsen/logrus"
@@ -32,6 +33,14 @@ func (s *Service) AddHandler(key string, handler Handler) {
 	fmt.Println("adding handler")
 
 	s.handlers[key] = handler
+}
+
+func (s *Service) AddHandlerMethod(method, path string, handler Handler) {
+
+	key := strings.Join([]string{method, path}, " ")
+
+	s.AddHandler(key, handler)
+
 }
 
 func (s *Service) HandleRoutes() Handler {
