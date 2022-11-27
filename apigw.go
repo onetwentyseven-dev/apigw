@@ -24,7 +24,7 @@ func New(lgr *logrus.Logger) *Service {
 	}
 }
 
-func (s *Service) AddHandler(key string, handler Handler) {
+func (s *Service) addHandler(key string, handler Handler) {
 	if _, ok := s.handlers[key]; ok {
 		s.logger.WithField("key", key).Fatal("handler already registered for key")
 	}
@@ -32,11 +32,11 @@ func (s *Service) AddHandler(key string, handler Handler) {
 	s.handlers[key] = handler
 }
 
-func (s *Service) AddHandlerMethod(method, path string, handler Handler) {
+func (s *Service) AddHandler(method, path string, handler Handler) {
 
 	key := strings.Join([]string{method, path}, " ")
 
-	s.AddHandler(key, handler)
+	s.addHandler(key, handler)
 
 }
 
