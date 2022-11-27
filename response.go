@@ -9,7 +9,7 @@ import (
 )
 
 // Respond is a simple response with a status and body
-func respond(status int, body string, headers map[string]string, isBase64Encoded bool) (*events.APIGatewayV2HTTPResponse, error) {
+func Respond(status int, body string, headers map[string]string, isBase64Encoded bool) (*events.APIGatewayV2HTTPResponse, error) {
 
 	if headers == nil {
 		headers = map[string]string{}
@@ -30,7 +30,7 @@ func respond(status int, body string, headers map[string]string, isBase64Encoded
 
 // RespondError returns a response while logging an error
 func RespondError(status int, body string, headers map[string]string, err error) (*events.APIGatewayV2HTTPResponse, error) {
-	return respond(status, body, headers, false)
+	return Respond(status, body, headers, false)
 }
 
 // RespondJSON returns a json-formatted response
@@ -40,7 +40,7 @@ func RespondJSON(status int, body interface{}, headers map[string]string) (*even
 	}
 
 	if body == nil {
-		return respond(status, "", headers, false)
+		return Respond(status, "", headers, false)
 	}
 
 	headers["Content-Type"] = "application/json"
@@ -50,7 +50,7 @@ func RespondJSON(status int, body interface{}, headers map[string]string) (*even
 		return RespondError(status, `{"error": "an internal error occurred"}`, headers, err)
 	}
 
-	return respond(status, string(data), headers, false)
+	return Respond(status, string(data), headers, false)
 }
 
 // RespondJSONError returns a json-formatted error response
