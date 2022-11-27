@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-lambda-go v1.34.1
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
+	github.com/google/uuid v1.3.0
 	github.com/sirupsen/logrus v1.9.0
 )
 
