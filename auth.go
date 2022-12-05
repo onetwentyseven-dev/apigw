@@ -2,6 +2,8 @@ package apigw
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -124,4 +126,31 @@ func Auth(client *http.Client, tenant, clientID, audience string) (Middleware, e
 
 		}
 	}, nil
+}
+
+func UserIDFromContext(ctx context.Context) (string, error) {
+
+	token, err := TokenFromContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	cliams := token.PrivateClaims()
+
+	emailIface, ok := cliams["https://email"]
+	if !ok {
+		return "", fmt.Errorf("required key email missing from claims")
+	}
+
+	email, ok := emailIface.(string)
+	if !ok {
+		return "", fmt.Errorf("key email is %T expected string", emailIface)
+	}
+
+	md5Hash := md5.New()
+	md5Hash.Write([]byte(email))
+	hash := md5Hash.Sum(nil)
+
+	return hex.EncodeToString(hash), nil
+
 }
