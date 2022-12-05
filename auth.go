@@ -102,6 +102,11 @@ func Auth(client *http.Client, tenant, clientID, audience string) (Middleware, e
 				}, nil
 			}
 
+			if strings.HasPrefix(strings.ToLower(authorization), `bearer `) {
+				authorization = strings.TrimPrefix(authorization, `bearer `)
+				authorization = strings.TrimPrefix(authorization, `Bearer `)
+			}
+
 			token, err := jwt.ParseString(
 				authorization,
 				jwt.WithKeySet(jwks),
