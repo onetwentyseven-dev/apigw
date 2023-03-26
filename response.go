@@ -9,13 +9,13 @@ import (
 )
 
 // Respond is a simple response with a status and body
-func Respond(status int, body string, headers map[string]string, isBase64Encoded bool) (*events.APIGatewayV2HTTPResponse, error) {
+func Respond(status int, body string, headers map[string]string, isBase64Encoded bool) (*events.APIGatewayProxyResponse, error) {
 
 	if headers == nil {
 		headers = map[string]string{}
 	}
 
-	e := &events.APIGatewayV2HTTPResponse{
+	e := &events.APIGatewayProxyResponse{
 		StatusCode: status,
 		Headers:    headers,
 	}
@@ -29,12 +29,12 @@ func Respond(status int, body string, headers map[string]string, isBase64Encoded
 }
 
 // RespondError returns a response while logging an error
-func RespondError(status int, body string, headers map[string]string, err error) (*events.APIGatewayV2HTTPResponse, error) {
+func RespondError(status int, body string, headers map[string]string, err error) (*events.APIGatewayProxyResponse, error) {
 	return Respond(status, body, headers, false)
 }
 
 // RespondJSON returns a json-formatted response
-func RespondJSON(status int, body interface{}, headers map[string]string) (*events.APIGatewayV2HTTPResponse, error) {
+func RespondJSON(status int, body interface{}, headers map[string]string) (*events.APIGatewayProxyResponse, error) {
 	if headers == nil {
 		headers = map[string]string{}
 	}
@@ -54,7 +54,7 @@ func RespondJSON(status int, body interface{}, headers map[string]string) (*even
 }
 
 // RespondJSONError returns a json-formatted error response
-func RespondJSONError(ctx context.Context, status int, msg string, headers map[string]string, err error) (*events.APIGatewayV2HTTPResponse, error) {
+func RespondJSONError(ctx context.Context, status int, msg string, headers map[string]string, err error) (*events.APIGatewayProxyResponse, error) {
 	if err != nil {
 		logrus.New().WithContext(ctx).WithError(err).WithFields(logrus.Fields{
 			"status": status,

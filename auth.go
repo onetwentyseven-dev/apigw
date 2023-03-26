@@ -95,11 +95,11 @@ func Auth(client *http.Client, tenant, clientID, audience string) (Middleware, e
 	}
 
 	return func(next Handler) Handler {
-		return func(ctx context.Context, event events.APIGatewayV2HTTPRequest) (*events.APIGatewayV2HTTPResponse, error) {
+		return func(ctx context.Context, event events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 
 			authorization := event.Headers["authorization"]
 			if authorization == "" {
-				return &events.APIGatewayV2HTTPResponse{
+				return &events.APIGatewayProxyResponse{
 					StatusCode: http.StatusUnauthorized,
 				}, nil
 			}

@@ -21,11 +21,11 @@ var DefaultCorsOpt = &CorsOpts{
 
 func Cors(opts *CorsOpts) Middleware {
 	return func(next Handler) Handler {
-		return func(ctx context.Context, req events.APIGatewayV2HTTPRequest) (*events.APIGatewayV2HTTPResponse, error) {
+		return func(ctx context.Context, req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 			hders := buildCorsHeaders(opts, req)
 
-			if req.RequestContext.HTTP.Method == http.MethodOptions {
-				return &events.APIGatewayV2HTTPResponse{
+			if req.RequestContext.HTTPMethod == http.MethodOptions {
+				return &events.APIGatewayProxyResponse{
 					StatusCode: http.StatusNoContent,
 					Headers:    hders,
 				}, nil
@@ -49,7 +49,7 @@ func Cors(opts *CorsOpts) Middleware {
 	}
 }
 
-func buildCorsHeaders(opts *CorsOpts, req events.APIGatewayV2HTTPRequest) map[string]string {
+func buildCorsHeaders(opts *CorsOpts, req events.APIGatewayProxyRequest) map[string]string {
 	hdrs := make(map[string]string)
 
 	if len(opts.Headers) > 0 {
