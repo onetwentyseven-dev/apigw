@@ -43,7 +43,7 @@ func (s *Service) AddHandler(method, path string, handler Handler) {
 func (s *Service) HandleRoutes(ctx context.Context, input events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 
 	// rk stands for routeKey
-	rk := fmt.Sprintf("%s %s", input.HTTPMethod, input.Path)
+	rk := fmt.Sprintf("%s %s", input.HTTPMethod, input.Resource)
 
 	if _, ok := s.handlers[rk]; !ok {
 		return RespondJSON(http.StatusNotFound, map[string]string{"error": fmt.Sprintf("Route Not Found for %s", rk)}, nil)
