@@ -115,9 +115,10 @@ func Auth(client *http.Client, tenant, clientID, audience string) (Middleware, e
 				jwt.WithIssuer(tenant),
 				jwt.WithClock(jwt.ClockFunc(time.Now().UTC)),
 				jwt.WithClaimValue("azp", audience),
+				jwt.WithValidate(true),
 			)
 			if err != nil {
-				return RespondError(http.StatusUnauthorized, "", nil, nil)
+				return RespondJSONError(ctx, http.StatusUnauthorized, "", nil, err)
 			}
 
 			ctx = context.WithValue(ctx, UserContextKey, token)
