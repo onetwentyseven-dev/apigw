@@ -112,9 +112,10 @@ func Auth(client *http.Client, tenant, clientID, audience string) (Middleware, e
 			token, err := jwt.ParseString(
 				authorization,
 				jwt.WithKeySet(jwks),
-				jwt.WithIssuer(tenant),
 				jwt.WithClock(jwt.ClockFunc(time.Now().UTC)),
-				jwt.WithClaimValue("azp", audience),
+				jwt.WithIssuer(tenant),
+				jwt.WithClaimValue("azp", clientID),
+				jwt.WithAudience(audience),
 				jwt.WithValidate(true),
 			)
 			if err != nil {
