@@ -17,6 +17,9 @@ type Service struct {
 
 type Handler func(context.Context, events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error)
 
+// Websocket Handler Func Signature
+type WsHandler func(context.Context, events.APIGatewayWebsocketProxyRequest) (*events.APIGatewayProxyResponse, error)
+
 func New(lgr *logrus.Logger) *Service {
 	return &Service{
 		logger:   lgr,
