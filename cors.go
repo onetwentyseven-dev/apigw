@@ -22,7 +22,7 @@ var DefaultCorsOpt = &CorsOpts{
 func Cors(opts *CorsOpts) Middleware {
 	return func(next Handler) Handler {
 		return func(ctx context.Context, req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-			hders := buildCorsHeaders(opts, req)
+			hders := buildCorsHeaders(opts)
 
 			if req.RequestContext.HTTPMethod == http.MethodOptions {
 				return &events.APIGatewayProxyResponse{
@@ -49,7 +49,7 @@ func Cors(opts *CorsOpts) Middleware {
 	}
 }
 
-func buildCorsHeaders(opts *CorsOpts, req events.APIGatewayProxyRequest) map[string]string {
+func buildCorsHeaders(opts *CorsOpts) map[string]string {
 	hdrs := make(map[string]string)
 
 	if len(opts.Headers) > 0 {
@@ -62,17 +62,6 @@ func buildCorsHeaders(opts *CorsOpts, req events.APIGatewayProxyRequest) map[str
 	if len(opts.Origins) > 0 {
 		hdrs[headers.AccessControlAllowOrigin] = strings.Join(opts.Origins, ",")
 	}
-
-	// if len(opts.Origins) > 0 && req.Headers["origin"] != "" {
-	// 	originHeader := req.Headers["origin"]
-
-	// 	for _, origin := range opts.Origins {
-	// 		if matchOrigin(origin, originHeader) {
-	// 			hdrs[headers.AccessControlAllowOrigin] = originHeader
-	// 			break
-	// 		}
-	// 	}
-	// }
 
 	return hdrs
 }

@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/aws/aws-lambda-go v1.34.1
+	github.com/aws/aws-sdk-go-v2 v1.30.3
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/google/uuid v1.3.0
 	github.com/lestrrat-go/jwx v1.2.25
@@ -11,6 +12,7 @@ require (
 )
 
 require (
+	github.com/aws/smithy-go v1.20.3 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.0-20210816181553-5444fa50b93d // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect
