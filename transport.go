@@ -17,47 +17,56 @@ type transport struct {
 	original http.RoundTripper
 
 	config aws.Config
-	// signer v4.Signer
+	signer *v4.Signer
 }
 
-func NewTransport(original http.RoundTripper, config aws.Config) http.RoundTripper {
+func NewTransport(original http.RoundTripper, config aws.Config, signer *v4.Signer) http.RoundTripper {
 
 	if original == nil {
 		original = http.DefaultTransport
 	}
 
+	// func(options *v4.SignerOptions) {
+	// 	options.LogSigning = true
+	// 	options.Logger = logging.NewStandardLogger(os.Stdout)
+	// }
+
+	if signer == nil {
+		signer = v4.NewSigner()
+	}
+
 	return &transport{
 		original: original,
 		config:   config,
-		// signer:   signer,
+		signer:   signer,
 	}
 }
 
 func (t *transport) RoundTrip(r *http.Request) (*http.Response, error) {
 
-	cloned := r.Clone(r.Context())
+	var hashed string = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	if r.Body != nil && r.ContentLength > 0 {
 
-	if cloned.Body == nil && cloned.ContentLength == 0 {
-		cloned.Body = io.NopCloser(bytes.NewBufferString(""))
+		data, err := io.ReadAll(r.Body)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read body: %w", err)
+		}
+
+		payloadSha := sha256.Sum256(data)
+
+		hashed = hex.EncodeToString(payloadSha[:])
+
+		fmt.Println("Hashed Body: ", hashed)
+		r.Body = io.NopCloser(bytes.NewBuffer(data))
+
 	}
-
-	signer := v4.NewSigner()
-
-	hash := sha256.New()
-
-	_, err := io.Copy(hash, cloned.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to copy body to hash: %w", err)
-	}
-
-	hashed := hex.EncodeToString(hash.Sum(nil))
 
 	creds, err := t.config.Credentials.Retrieve(r.Context())
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve credentials: %w", err)
 	}
 
-	err = signer.SignHTTP(cloned.Context(), creds, r, hashed, "execute-api", t.config.Region, time.Now())
+	err = t.signer.SignHTTP(r.Context(), creds, r, hashed, "execute-api", t.config.Region, time.Now())
 	if err != nil {
 		return nil, fmt.Errorf("failed to sign request: %w", err)
 	}
