@@ -26,11 +26,6 @@ func NewTransport(original http.RoundTripper, config aws.Config, signer *v4.Sign
 		original = http.DefaultTransport
 	}
 
-	// func(options *v4.SignerOptions) {
-	// 	options.LogSigning = true
-	// 	options.Logger = logging.NewStandardLogger(os.Stdout)
-	// }
-
 	if signer == nil {
 		signer = v4.NewSigner()
 	}
@@ -56,7 +51,6 @@ func (t *transport) RoundTrip(r *http.Request) (*http.Response, error) {
 
 		hashed = hex.EncodeToString(payloadSha[:])
 
-		fmt.Println("Hashed Body: ", hashed)
 		r.Body = io.NopCloser(bytes.NewBuffer(data))
 
 	}
